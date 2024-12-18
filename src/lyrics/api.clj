@@ -48,7 +48,8 @@
          (map :result)
          (map #(select-keys % [:title :url :id :primary-artist :primary-artists :release-date-components :irrelevant])))))
 
-(comment (with-open [writer (io/writer "sleigh-rides.csv")]
+(comment
+  (with-open [writer (io/writer "sleigh-rides.csv")]
            (csv/write-csv writer
                           [["id" "title" "year" "artist" "url" "party" "irrelevant"]])
            (csv/write-csv writer

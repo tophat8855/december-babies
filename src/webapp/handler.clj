@@ -2,10 +2,11 @@
   (:require [compojure.core :refer [defroutes GET]]
             [compojure.route :as route]
             [ring.adapter.jetty :as jetty]
-            [ring.middleware.defaults :refer [wrap-defaults site-defaults]]))
+            [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
+            [webapp.views :as views]))
 
 (defroutes app-routes
-  (GET "/" [] "Hello World")
+  (GET "/" [] (views/home-page))
   (route/not-found "Not Found"))
 
 (def app
