@@ -33,14 +33,17 @@
    [:h2 "Let's find out!"]
    [:div "You can search artists"]
 
-   (let [all-songs (db/get-all-songs)]
+   (let [all-songs (remove
+                    (fn [song]
+                      (= "irrelevant" (:party song)))
+                    (db/get-all-songs))]
      [:table
-      [:tr [:th "artist"] [:th "year"] [:th "birthday party?"]]
+      [:tr [:th "artist"] [:th "year"] [:th "party?"]]
       (for [song all-songs]
         [:tr
          [:td (:artist song)]
          [:td (:year song)]
-         [:td (:url song)]])])
+         [:td (:party song)]])])
 
    #_[:form {:method "get" :action "/search-artists"}
       [:input {:type "submit" :value "Search Artists"}]]))

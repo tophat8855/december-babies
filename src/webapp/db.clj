@@ -11,6 +11,7 @@
 (defn get-all-songs
   []
   (->> sleigh-ride-data
+       (remove (fn [song] (= [""] song)))
        rest
        (map zipmap
             (->> (first sleigh-ride-data) ;; First row is the header

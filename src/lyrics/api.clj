@@ -1,10 +1,13 @@
 (ns lyrics.api
   (:require [camel-snake-kebab.core :as csk]
+            [cheshire.core :as json]
             [clj-http.client :as http]
             [clojure.data.csv :as csv]
             [clojure.java.io :as io]
             [clojure.pprint :refer [pprint]]
-            [cheshire.core :as json]))
+            [clojure.string :as string]
+            [hickory.core :refer [as-hickory parse]]
+            [hickory.select :as hs]))
 
 (defn spy
   [x]
@@ -48,16 +51,52 @@
          (map :result)
          (map #(select-keys % [:title :url :id :primary-artist :primary-artists :release-date-components :irrelevant])))))
 
+(defn to-hickory [url]
+  (-> (http/get url)
+      :body
+      parse
+      as-hickory))
+
+(defn categorize-song
+  [lyrics]
+  (cond
+    (nil? lyrics) "instrumental"
+
+    (empty? (filter #(string/includes? (string/lower-case %) "lovely weather") lyrics))
+    "irrelevant"
+
+    (seq (filter #(string/includes? (string/lower-case %) "birthday party") lyrics))
+    "birthday"
+
+    (seq (filter #(string/includes? (string/lower-case %) "christmas party") lyrics))
+    "christmas"
+
+    (seq (filter #(string/includes? (string/lower-case %) "new years party") lyrics))
+    "new years"
+
+    :else "none"))
+
+(defn scrape-lyrics-for-party
+  [url]
+  (->> url
+       to-hickory
+       (hs/select (hs/attr :data-lyrics-container))
+       first
+       :content
+       categorize-song))
+
 (comment
   (with-open [writer (io/writer "sleigh-rides.csv")]
-           (csv/write-csv writer
-                          [["id" "title" "year" "artist" "url" "party" "irrelevant"]])
-           (csv/write-csv writer
-                          (map (fn [song]
-                                 [(song :id)
-                                  (song :title)
-                                  (->> (song :release-date-components)
-                                       :year)
-                                  (get-in (song :primary-artist) [:name])
-                                  (song :url)])
-                               sleigh-ride-songs))))
+    (csv/write-csv writer
+                   [["id" "title" "year" "artist" "party"]])
+    (csv/write-csv writer
+                   (map (fn [song]
+                          (when (and (string/includes? (string/lower-case (song :title)) "sleigh")
+                                     (string/includes? (string/lower-case (song :title)) "ride"))
+                            [(song :id)
+                             (song :title)
+                             (->> (song :release-date-components)
+                                  :year)
+                             (get-in (song :primary-artist) [:name])
+                             (scrape-lyrics-for-party (song :url))]))
+                        sleigh-ride-songs))))
