@@ -4,7 +4,7 @@
 
 (deftest categorize-song
   (testing "instrumental songs"
-    (let [hickory-lyrics nil]
+    (let [hickory-lyrics []]
       (is (= "instrumental"
              (api/categorize-song hickory-lyrics)))))
 

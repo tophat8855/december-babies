@@ -60,7 +60,7 @@
 (defn categorize-song
   [lyrics]
   (cond
-    (nil? lyrics) "instrumental"
+    (empty? lyrics) "instrumental"
 
     (empty? (filter #(string/includes? (string/lower-case %) "lovely weather") lyrics))
     "irrelevant"
@@ -81,9 +81,12 @@
   (->> url
        to-hickory
        (hs/select (hs/attr :data-lyrics-container))
-       first
-       :content
+       (map #(get % :content))
+       flatten
+       (filter #(= java.lang.String (type %)))
        categorize-song))
+
+(scrape-lyrics-for-party "https://genius.com/August-burns-red-sleigh-ride-lyrics")
 
 (comment
   (with-open [writer (io/writer "sleigh-rides.csv")]
