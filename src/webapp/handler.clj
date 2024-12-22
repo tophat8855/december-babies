@@ -7,6 +7,9 @@
 
 (defroutes app-routes
   (GET "/" [] (views/home-page))
+  (GET "/love-december-babies" [] (views/love-december-babies-page))
+  (GET "/hate-december-babies" [] (views/hate-december-babies-page))
+  (GET "/neutral-december-babies" [] (views/neutral-december-babies-page))
   (route/not-found "Not Found"))
 
 (def app

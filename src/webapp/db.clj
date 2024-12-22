@@ -12,8 +12,7 @@
   (let [year (if (string/blank? (:year track1)) (:year track2) (:year track1))]
     (assoc track1 :year year)))
 
-(defn get-all-songs
-  []
+(def get-all-songs
   (->> sleigh-ride-data
        (remove (fn [song] (= [""] song)))
        rest
@@ -24,4 +23,13 @@
        (group-by :artist)
        (map (fn [[artist trks]]
               (reduce merge-tracks trks)))
-       (into [])))
+       (into [])
+       (remove
+        (fn [song]
+          (= "irrelevant" (:party song))))))
+
+(def get-birthday-songs
+  (sort-by :artist (get (group-by :party get-all-songs) "birthday")))
+
+(def get-instrumental-songs
+  (sort-by :artist (get (group-by :party get-all-songs) "instrumental")))
