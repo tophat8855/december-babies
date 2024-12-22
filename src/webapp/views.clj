@@ -50,24 +50,17 @@
       (for [song (get grouped-songs "christmas")]
         [:div (:artist song)])
 
-      [:h3 "The one group who hates December babies, but likes the new year?"]
+      [:h3 "Artists who hate December babies, but likes the new year?"]
       "aka, those who changed 'birthday' to 'new years' in their version"
       (for [song (get grouped-songs "new years")]
         [:div (:artist song)])
 
-      [:h3 "Artists who dislike parties"]
+      [:h3 "Artists who hate December babies and parties in general"]
       "aka, those who removed any reference to a party at all in their version"
       (for [song (get grouped-songs "none")]
         [:div (:artist song)])
 
       [:h3 "Instrumental versions"]
       (for [song (get grouped-songs "instrumental")]
-        [:div (:artist song)])]
-     #_[:table
-        [:tr [:th "artist"] [:th "year"] [:th "party?"]]
-        (for [song all-songs]
-          [:tr
-           [:td (:artist song)]
-           [:td (:year song)]
-           [:td (:party song)]])])))
+        [:div (:artist song)])])))
 
