@@ -33,18 +33,41 @@
    [:h2 "Let's find out!"]
    [:div "You can search artists"]
 
-   (let [all-songs (remove
-                    (fn [song]
-                      (= "irrelevant" (:party song)))
-                    (db/get-all-songs))]
-     [:table
-      [:tr [:th "artist"] [:th "year"] [:th "party?"]]
-      (for [song all-songs]
-        [:tr
-         [:td (:artist song)]
-         [:td (:year song)]
-         [:td (:party song)]])])
+   (let [all-songs     (remove
+                        (fn [song]
+                          (= "irrelevant" (:party song)))
+                        (db/get-all-songs))
+         grouped-songs (group-by :party all-songs)]
 
-   #_[:form {:method "get" :action "/search-artists"}
-      [:input {:type "submit" :value "Search Artists"}]]))
+     [:div
+      [:h3 "Artists who love December babies"]
+      "aka, those who kept the 'birthday' verse in their version"
+      (for [song (get grouped-songs "birthday")]
+        [:div (:artist song)])
+
+      [:h3 "Artists who hate December babies"]
+      "aka, those who changed 'birthday' to 'christmas' in their version"
+      (for [song (get grouped-songs "christmas")]
+        [:div (:artist song)])
+
+      [:h3 "The one group who hates December babies, but likes the new year?"]
+      "aka, those who changed 'birthday' to 'new years' in their version"
+      (for [song (get grouped-songs "new years")]
+        [:div (:artist song)])
+
+      [:h3 "Artists who dislike parties"]
+      "aka, those who removed any reference to a party at all in their version"
+      (for [song (get grouped-songs "none")]
+        [:div (:artist song)])
+
+      [:h3 "Instrumental versions"]
+      (for [song (get grouped-songs "instrumental")]
+        [:div (:artist song)])]
+     #_[:table
+        [:tr [:th "artist"] [:th "year"] [:th "party?"]]
+        (for [song all-songs]
+          [:tr
+           [:td (:artist song)]
+           [:td (:year song)]
+           [:td (:party song)]])])))
 
