@@ -6,7 +6,7 @@
 (defn home-page
   []
   (page/html5
-   [:h1 "Home"]
+   [:h1 "Who loves December Babies?"]
    [:h2 "It's hard to have a birthday in December"]
    [:div "If your birthday is in the second half of the month, your birthday conflicts with the big holidays."
     "People are out of town, spending time with their families, and not attending your party."]
